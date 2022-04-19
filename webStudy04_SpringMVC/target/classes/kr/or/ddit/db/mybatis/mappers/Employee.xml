@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.employee.dao.EmployeeDAO">
+	<select id="selectEmploeeList" parameterType="string" resultType="EmployeeVO">
+		SELECT 
+			EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL
+			, PHONE_NUMBER
+			, HIRE_DATE
+			, TO_CHAR(HIRE_DATE, 'YYYY-MM-DD') HIRE_DATE_STR
+			, JOB_ID, SALARY
+			, COMMISSION_PCT, MANAGER_ID, DEPARTMENT_ID
+			, EMP_NAME
+			, (SELECT COUNT(*) FROM HR.EMPLOYEES B WHERE A.EMPLOYEE_ID = B.MANAGER_ID)
+        		CHILD_CNT
+		FROM HR.EMPLOYEES A
+		<where>
+			<choose>
+				<when test="@org.apache.commons.lang3.StringUtils@isNotBlank(managerId)">
+					MANAGER_ID = #{managerId}
+				</when>
+				<otherwise>
+					MANAGER_ID IS NULL
+				</otherwise>
+			</choose>
+		</where>
+		<if test="managerId">
+		</if>
+	</select>
+	<select id="selectAllEmployee" resultType="EmployeeVO">
+		SELECT 
+			EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL
+			, PHONE_NUMBER
+			, HIRE_DATE
+			, TO_CHAR(HIRE_DATE, 'YYYY-MM-DD"T"HH:MI:SS') HIRE_DATE_STR
+			, JOB_ID, SALARY
+			, COMMISSION_PCT, MANAGER_ID, DEPARTMENT_ID
+			, EMP_NAME
+		FROM HR.EMPLOYEES
+	</select>
+</mapper>
